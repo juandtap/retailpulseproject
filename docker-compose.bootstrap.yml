@@ -1,0 +1,24 @@
+services:
+
+  minio-bootstrap:
+
+    image: minio/mc:latest
+
+    container_name: retailpulse-minio-bootstrap
+
+    depends_on:
+      minio:
+        condition: service_healthy
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./docker/minio/scripts:/scripts
+
+    command: ["/bin/sh", "/scripts/init-minio.sh"]
+
+    restart: "no"
+
+    networks:
+      - retailpulse_network

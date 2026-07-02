@@ -1,0 +1,79 @@
+services:
+
+  postgres:
+    container_name: retailpulse-postgres
+
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - retailpulse-network
+  
+  minio:
+    container_name: retailpulse-minio
+
+    build:
+      context: .
+      dockerfile: docker/minio/Dockerfile
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    command: server /data --console-address ":9001"
+
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+
+    ports:
+      - "${MINIO_API_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+
+    volumes:
+      - minio_data:/data
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - retailpulse-network
+
+volumes:
+  postgres_data:
+    driver: local
+    name: retailpulse_postgres_data
+  minio_data:
+    driver: local
+    name: retailpulse_minio_data
+
+networks:
+  retailpulse-network:
+    driver: bridge

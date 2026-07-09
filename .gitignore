@@ -21,3 +21,6 @@ logs/
 *.log
 
 venv/
+
+data/raw/*
+data/favorita/*.csv

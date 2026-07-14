@@ -21,6 +21,20 @@ logs/
 *.log
 
 venv/
+.venv/
+**/.venv/
+**/venv/
+
+# Jupyter
+.ipynb_checkpoints
 
 data/raw/*
 data/favorita/*.csv
+
+
+# Logs
+**/logs/
+*.log
+
+# parquet files
+tmp/

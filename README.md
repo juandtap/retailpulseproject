@@ -1,26 +1,32 @@
-PostgreSQL
+### PostgreSQL
 
 Será nuestro Data Warehouse.
 
 Persistirá la información transformada.
 
-MinIO
+### MinIO
 
 Será nuestro Data Lake.
 
 Aquí guardaremos los archivos originales.
 
+### Ejecución 
 
 Primer uso
 
+``` 
 docker compose \
 -f docker-compose.yml \
 -f docker-compose.bootstrap.yml \
 up --build
+ ```
 
 Uso diario
 
+```
 docker compose up -d
+
+```
 
 Se agrega Makefile
 
@@ -28,7 +34,7 @@ Primera ejecución
 
 1. make bootstrap
 
-Luego make up 
+2. Luego make up 
 
 
 
@@ -48,3 +54,23 @@ Eso es exactamente el trabajo que hace un Data Engineer antes de construir un pi
 Data Generator
 
 Este componente va a simular el sistema POS (Point of Sale) de una cadena de supermercados. En una empresa, este flujo normalmente vendría de Kafka, RabbitMQ o directamente desde los sistemas de caja. Nosotros lo simularemos leyendo el histórico y publicando pequeños lotes.
+
+Notas:
+
+El estado solo debe actualizarse cuando la operación fue exitosa.
+
+En producción nunca se guardan credenciales en un .env del repositorio.
+
+Se usan:
+
+Kubernetes Secrets
+HashiCorp Vault
+AWS Secrets Manager
+Azure Key Vault
+Google Secret Manager
+
+Nosotros simularemos ese escenario más adelante.
+
+- Migrar Logs a carpeta general 
+- Cambiar nombre de rama de MASTER a "OTRONOMBRE" y crear otra rama SPARK cuando pasemos a implementar con Spark.
+- mejorar stados de carga de batch usando archivos temporales (tempfile)

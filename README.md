@@ -87,4 +87,23 @@ Nosotros simularemos ese escenario más adelante.
 
     En una buena arquitectura, el estado no debería depender de la implementación interna.
 
+    Que pasa si el archivo pesa demasiado se sigue usando pd.readcsv() ? -> usar polaris
+
+    considerar en un futuro dos ramas una para pandas y otra para spark o usar un .env con
+
+    ```
+    PROCESSING_ENGINE=pandas
+
+    o
+
+    PROCESSING_ENGINE=spark
     
+    ```
+
+    en 
+
+    ``` 
+    reader = DataReaderFactory.create(
+        engine=settings.processing_engine
+    )
+    ```

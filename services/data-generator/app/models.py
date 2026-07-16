@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
-import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pandas import DataFrame
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Batch(BaseModel):
@@ -11,11 +11,13 @@ class Batch(BaseModel):
 
     batch_number: int
 
-    dataframe: pd.DataFrame
+    dataframe: DataFrame
 
     row_count: int
 
-    created_at: datetime
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC)
+    )
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True

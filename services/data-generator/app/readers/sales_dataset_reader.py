@@ -27,7 +27,14 @@ class SalesDatasetReader:
                 f"Dataset not found: {self._dataset_path}"
             )
 
-        self._dataframe = pd.read_csv(self._dataset_path)
+        self._dataframe = pd.read_csv(
+            self._dataset_path, 
+            parse_dates=["date"], 
+            dtype={
+                    "store_nbr": "int16",
+                    "family": "category",
+                    "onpromotion": "int16",
+                    },)
 
         logger.info(
             f"Dataset loaded successfully ({len(self._dataframe):,} rows)"

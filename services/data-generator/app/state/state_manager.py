@@ -2,6 +2,19 @@ from pathlib import Path
 
 from app.models import GeneratorState
 
+from datetime import datetime
+
+from pydantic import BaseModel
+
+
+class GeneratorState(BaseModel):
+
+    last_uploaded_batch: int = 0
+
+    last_uploaded_rows: int = 0
+
+    last_uploaded_at: datetime | None = None
+
 
 class StateManager:
 
@@ -13,16 +26,16 @@ class StateManager:
 
         if not self._state_file.exists():
 
-            return GeneratorState(
-                current_index=0,
-                next_batch_number=1,
-            )
+            return GeneratorState()
 
         return GeneratorState.model_validate_json(
             self._state_file.read_text()
         )
 
-    def save(self, state: GeneratorState):
+    def save(
+        self,
+        state: GeneratorState,
+    ) -> None:
 
         self._state_file.parent.mkdir(
             parents=True,

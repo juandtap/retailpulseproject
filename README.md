@@ -74,3 +74,17 @@ Nosotros simularemos ese escenario más adelante.
 - Migrar Logs a carpeta general 
 - Cambiar nombre de rama de MASTER a "OTRONOMBRE" y crear otra rama SPARK cuando pasemos a implementar con Spark.
 - mejorar stados de carga de batch usando archivos temporales (tempfile)
+- Cambiar temporalmente la variable MINIO_ENDPOINT a localhost:9000, cuando se dockerize el servicio de python se coloca como estaba antes
+- orque el índice es un detalle interno del BatchGenerator.
+
+    Si algún día cambiamos:
+
+    Pandas → Spark
+    CSV → Kafka
+    Batch fijo → Streaming
+
+    ese índice dejaría de tener sentido.
+
+    En una buena arquitectura, el estado no debería depender de la implementación interna.
+
+    

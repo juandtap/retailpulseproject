@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     # Logs
     log_level: str
 
+    #local 
+    state_file: str
+
+    tmp_directory: str
+
+    # Object naming
     raw_sales_prefix: str
 
     model_config = SettingsConfigDict(

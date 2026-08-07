@@ -1,7 +1,6 @@
 import time
-
-from datetime import UTC, datetime
 from pathlib import Path
+from datetime import UTC, datetime
 
 from app.builders.object_name_builder import ObjectNameBuilder
 from app.config import settings
@@ -14,25 +13,22 @@ from app.state.state_manager import StateManager
 from app.uploaders.minio_uploader import MinIOUploader
 
 
-
 class IngestionService:
 
     def run(self) -> None:
 
-        # -----------------------------
-        # Read Dataset
-        # -----------------------------
+        # --------------------------------------------------
+        # Load dataset
+        # --------------------------------------------------
 
         reader = SalesDatasetReader()
-
         reader.load()
 
+        # --------------------------------------------------
+        # Load state
+        # --------------------------------------------------
 
-        ## load state
-
-        state_manager = StateManager(
-                settings.state_file
-            )
+        state_manager = StateManager(settings.state_file)
 
         state = state_manager.load()
 
@@ -40,9 +36,11 @@ class IngestionService:
             f"Last uploaded batch: {state.last_uploaded_batch}"
         )
 
-        # -----------------------------
-        # Generate Batch
-        # -----------------------------
+        processed_rows = state.last_uploaded_rows
+
+        # --------------------------------------------------
+        # Create pipeline components
+        # --------------------------------------------------
 
         generator = BatchGenerator(
             dataframe=reader.dataframe,
@@ -50,56 +48,49 @@ class IngestionService:
             start_batch=state.last_uploaded_batch + 1,
         )
 
+        serializer = ParquetSerializer()
+
+        uploader = MinIOUploader()
+
+        builder = ObjectNameBuilder()
+
+        # --------------------------------------------------
+        # Process batches
+        # --------------------------------------------------
+
         while generator.has_next():
 
             batch = generator.next_batch()
 
             logger.info(
-                f"Generated batch #{batch.batch_number} "
-                f"({batch.row_count} rows)"
+                f"Processing batch #{batch.batch_number}"
             )
 
-            # -----------------------------
-            # Serialize
-            # -----------------------------
-
-            serializer = ParquetSerializer()
-
+            
             output_path = Path(
-                f"tmp/batch_{batch.batch_number:06}.parquet"
-            )
+                settings.tmp_directory
+            ) / f"batch_{batch.batch_number:06}.parquet"
 
             serializer.save(
                 batch=batch,
-                destination=output_path,
+                destination=output_path
+            )
+            logger.info(
+                f"Parquet created: {output_path}"
             )
 
-            # -----------------------------
-            # Build Object Name
-            # -----------------------------
-
-            builder = ObjectNameBuilder()
-
             object_name = builder.build(batch)
-
-            logger.info(f"Object Name: {object_name}")
-
-            # -----------------------------
-            # Upload
-            # -----------------------------
-
-            uploader = MinIOUploader()
 
             uploader.upload(
                 source=output_path,
                 object_name=object_name,
             )
 
-            # save state
+            processed_rows += batch.row_count
 
             state = GeneratorState(
                 last_uploaded_batch=batch.batch_number,
-                last_uploaded_rows=batch.batch_number * settings.data_batch_size,
+                last_uploaded_rows=processed_rows,
                 last_uploaded_at=datetime.now(UTC),
             )
 
@@ -114,11 +105,13 @@ class IngestionService:
                 output_path.unlink()
 
                 logger.info(
-                    f"Deleted temporary file: {output_path.name}"
+                    f"Temporary file deleted: {output_path.name}"
                 )
 
             time.sleep(
                 settings.data_batch_interval
             )
 
-        logger.success("Pipeline completed successfully.")
+        logger.success(
+            "Dataset fully processed."
+        )

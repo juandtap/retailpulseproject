@@ -27,7 +27,6 @@ class GeneratorState(BaseModel):
     """
     Stores the generator execution state.
     """
-
-    current_index: int
-
-    next_batch_number: int
+    last_uploaded_batch: int = 0
+    last_uploaded_rows: int = 0
+    last_uploaded_at: datetime | None = None

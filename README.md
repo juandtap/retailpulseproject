@@ -385,3 +385,11 @@ RESUMEN FLUJO
      ▼           ▼      Predictions
 Dashboard      API
 ```
+No reemplazaremos Pandas. Cada tecnología tendrá un trabajo diferente:
+    data-generator
+    Pandas
+    Fuente → RAW
+
+    spark-processor
+    Spark
+    RAW → BRONZE → posteriormente SILVER

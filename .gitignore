@@ -38,3 +38,6 @@ data/favorita/*.csv
 
 # parquet files
 tmp/
+
+#state json files
+**/state/*.json

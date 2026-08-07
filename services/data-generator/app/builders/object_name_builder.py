@@ -6,12 +6,13 @@ class ObjectNameBuilder:
 
     def build(self, batch: Batch) -> str:
 
-        date = batch.dataframe.iloc[0]["date"]
+        ingestion_time = batch.created_at
 
         return (
             f"{settings.raw_sales_prefix}/"
-            f"year={date.year}/"
-            f"month={date.month:02}/"
-            f"day={date.day:02}/"
+            f"ingestion_year={ingestion_time.year}/"
+            f"ingestion_month={ingestion_time.month:02}/"
+            f"ingestion_day={ingestion_time.day:02}/"
+            f"ingestion_hour={ingestion_time.hour:02}/"
             f"batch_{batch.batch_number:06}.parquet"
         )

@@ -1,7 +1,9 @@
 services:
 
   spark-master:
-    image: apache/spark:4.1.3-scala2.13-java17-python3-ubuntu
+    build:
+      context: .
+      dockerfile: docker/spark/Dockerfile
 
     container_name: retailpulse-spark-master
 
@@ -24,9 +26,16 @@ services:
     networks:
       - retailpulse-network
 
-
+    volumes:
+      - ./services/spark-processor:/opt/retailpulse/spark-processor
+    environment:
+      # Explicitly use Python 3 for PySpark
+      PYSPARK_PYTHON: python3
+      PYSPARK_DRIVER_PYTHON: python3
   spark-worker:
-    image: apache/spark:4.1.3-scala2.13-java17-python3-ubuntu
+    build:
+      context: .
+      dockerfile: docker/spark/Dockerfile
 
     container_name: retailpulse-spark-worker
 
@@ -51,3 +60,9 @@ services:
 
     networks:
       - retailpulse-network
+    volumes:
+      - ./services/spark-processor:/opt/retailpulse/spark-processor
+    environment:
+      # Explicitly use Python 3 for PySpark
+      PYSPARK_PYTHON: python3
+      PYSPARK_DRIVER_PYTHON: python3

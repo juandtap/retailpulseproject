@@ -12,4 +12,12 @@ RUN chmod 644 \
     /opt/spark/jars/hadoop-aws-3.4.2.jar \
     /opt/spark/jars/bundle-2.29.52.jar
 
+# Python requirements
+COPY services/spark-processor/requirements.txt /tmp/requirements.txt
+
+RUN pip install \
+    --no-cache-dir \
+    -r /tmp/requirements.txt
+
+
 USER spark

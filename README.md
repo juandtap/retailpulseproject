@@ -393,3 +393,5 @@ No reemplazaremos Pandas. Cada tecnología tendrá un trabajo diferente:
     spark-processor
     Spark
     RAW → BRONZE → posteriormente SILVER
+
+Todo dato externo entra primero a Raw y después Spark lo procesa.

@@ -395,3 +395,19 @@ No reemplazaremos Pandas. Cada tecnología tendrá un trabajo diferente:
     RAW → BRONZE → posteriormente SILVER
 
 Todo dato externo entra primero a Raw y después Spark lo procesa.
+
+No todas las tablas de un Data Lake deben particionarse.
+
+
+¿Por qué no particionamos stores?
+    
+    Tenemos solamente unas 54 tiendas.
+
+    Hacer:
+
+    city=Cuenca/
+    city=Quito/
+    city=Guayaquil/
+    ...
+
+    sería completamente innecesario.

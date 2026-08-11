@@ -72,7 +72,7 @@ class IngestionService:
             ) / f"batch_{batch.batch_number:06}.parquet"
 
             serializer.save(
-                batch=batch,
+                dataframe=batch.dataframe,
                 destination=output_path
             )
             logger.info(

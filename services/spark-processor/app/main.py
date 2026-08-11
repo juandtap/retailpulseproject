@@ -1,5 +1,11 @@
 from app.spark_session import create_spark_session
-from jobs.bronze_sales_job import run_bronze_sales_job
+from jobs.bronze_sales_job import (
+    run_bronze_sales_job,
+)
+from jobs.bronze_stores_job import (
+    run_bronze_stores_job,
+)
+
 from app.config import settings
 
 def main() -> None:
@@ -11,7 +17,11 @@ def main() -> None:
     try:
 
         print(
-            "Starting RetailPulse RAW -> BRONZE pipeline..."
+            "Starting RetailPulse Bronze pipelines..."
+        )
+
+        print(
+            "\n[1/2] Processing sales..."
         )
 
         run_bronze_sales_job(
@@ -19,21 +29,31 @@ def main() -> None:
         )
 
         print(
-            "RAW -> BRONZE pipeline completed successfully."
+            "\n[2/2] Processing stores..."
         )
 
-        # bronze_df = spark.read.parquet(
-        #     settings.bronze_sales_path
+        run_bronze_stores_job(
+            spark
+        )
+
+        print(
+            "\nBronze pipelines completed successfully."
+        )
+
+        # stores_df = spark.read.parquet(
+        #     settings.bronze_stores_path
         # )
 
-        # print("\n===== BRONZE COUNT =====")
-        # print(bronze_df.count())
+        # stores_df.printSchema()
 
-        # print("\n===== BRONZE SCHEMA =====")
-        # bronze_df.printSchema()
+        # stores_df.show(
+        #     10,
+        #     truncate=False,
+        # )
 
-        # print("\n===== BRONZE SAMPLE =====")
-        # bronze_df.show(10, truncate=False)
+        # print(
+        #     f"Stores: {stores_df.count()}"
+        # )
 
     finally:
 

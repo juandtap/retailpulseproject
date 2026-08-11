@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from app.models import Batch
+import pandas as pd
 
 
 class ParquetSerializer:
 
     def save(
         self,
-        batch: Batch,
+        dataframe: pd.DataFrame,
         destination: Path,
     ) -> None:
 
@@ -16,7 +16,7 @@ class ParquetSerializer:
             exist_ok=True,
         )
 
-        batch.dataframe.to_parquet(
+        dataframe.to_parquet(
             destination,
             index=False,
             engine="pyarrow",

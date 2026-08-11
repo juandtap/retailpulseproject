@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     raw_sales_path: str
     bronze_sales_path: str
 
+
+    raw_stores_path: str
+    bronze_stores_path: str
+
     # Logging
     log_level: str = "INFO"
 

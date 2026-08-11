@@ -40,6 +40,9 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    stores_dataset_path: str
+    raw_stores_prefix: str
+
 
 @lru_cache
 def get_settings() -> Settings:

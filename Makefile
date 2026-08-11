@@ -14,7 +14,7 @@ spark-up:
 	docker compose \
 		-f docker-compose.yml \
 		-f docker-compose.spark.yml \
-		up -d --build
+		up -d 
 
 spark-down:
 	docker compose \

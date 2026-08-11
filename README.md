@@ -411,3 +411,46 @@ No todas las tablas de un Data Lake deben particionarse.
     ...
 
     sería completamente innecesario.
+
+**left-anti**
+
+```
+sales_df.join(
+    stores_df,
+    on="store_nbr",
+    how="left_anti",
+)
+```
+Un left_anti devuelve precisamente las filas del lado izquierdo que no encontraron correspondencia.
+
+**Broadcast**
+```
+F.broadcast(stores_df)
+```
+Porque nuestras tablas son extremadamente diferentes: 3000888 (sales) vs 54 (stores)
+Un join distribuido convencional podría requerir reorganizar datos entre executors
+Mover datos por red es caro.
+
+Pero stores es diminuto.
+
+Spark puede hacer:
+```
+               stores (54)
+              /     |     \
+             ▼      ▼      ▼
+          Worker Worker Worker
+
+             ▲      ▲
+             │      │
+       Sales partitions
+```
+
+Cada executor recibe una copia completa de stores.
+
+Entonces puede resolver el join localmente.
+
+Eso es un Broadcast Hash Join.
+
+Para dimensiones pequeñas es un patrón extremadamente común.
+
+**No perder datos silenciosamente durante un enriquecimiento.**

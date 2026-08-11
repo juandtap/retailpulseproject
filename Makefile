@@ -1,4 +1,4 @@
-.PHONY: up down bootstrap spark-up spark-down spark-logs ps clean
+.PHONY: up down bootstrap spark-up spark-down spark-run spark-status spark-logs ps clean
 
 up:
 	docker compose up -d
@@ -21,6 +21,20 @@ spark-down:
 		-f docker-compose.yml \
 		-f docker-compose.spark.yml \
 		stop spark-master spark-worker
+
+spark-run:
+	docker exec -it \
+		-w /opt/retailpulse/spark-processor \
+		-e PYTHONPATH=/opt/retailpulse/spark-processor \
+		retailpulse-spark-master \
+		/opt/spark/bin/spark-submit \
+		app/main.py
+
+spark-status:
+	docker compose \
+		-f docker-compose.yml \
+		-f docker-compose.spark.yml \
+		ps spark-master spark-worker
 
 spark-logs:
 	docker compose \

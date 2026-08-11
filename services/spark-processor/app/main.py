@@ -6,6 +6,10 @@ from jobs.bronze_stores_job import (
     run_bronze_stores_job,
 )
 
+from jobs.silver_sales_job import (
+    run_silver_sales_job,
+)
+
 from app.config import settings
 
 def main() -> None:
@@ -21,7 +25,7 @@ def main() -> None:
         )
 
         print(
-            "\n[1/2] Processing sales..."
+            "\n[1/3] Processing sales..."
         )
 
         run_bronze_sales_job(
@@ -29,7 +33,7 @@ def main() -> None:
         )
 
         print(
-            "\n[2/2] Processing stores..."
+            "\n[2/3] Processing stores..."
         )
 
         run_bronze_stores_job(
@@ -40,20 +44,52 @@ def main() -> None:
             "\nBronze pipelines completed successfully."
         )
 
-        # stores_df = spark.read.parquet(
-        #     settings.bronze_stores_path
-        # )
+        print(
+            "\n[3/3] Processing Silver Sales..."
+        )
 
-        # stores_df.printSchema()
+        run_silver_sales_job(
+            spark
+        )
 
-        # stores_df.show(
-        #     10,
-        #     truncate=False,
-        # )
+        print(
+            "\Silver pipelines completed successfully."
+        )
 
-        # print(
-        #     f"Stores: {stores_df.count()}"
-        # )
+        print("TEST SILVER SALES_STORES....")
+        
+        silver_df = spark.read.parquet(
+            settings.silver_sales_path
+        )
+
+        silver_df.printSchema()
+
+        silver_df.show(
+            10,
+            truncate=False,
+        )
+
+        print(
+            f"Silver stores sales: {silver_df.count()}"
+        )
+
+        print("TEST BRONZE SALES....")
+        
+        stores_df = spark.read.parquet(
+            settings.bronze_sales_path
+        )
+
+        stores_df.printSchema()
+
+        stores_df.show(
+            10,
+            truncate=False,
+        )
+
+        print(
+            f"Bronze stores sales: {stores_df.count()}"
+        )
+        
 
     finally:
 
